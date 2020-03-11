@@ -19,7 +19,7 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="form.html">Registration</a></li>
-                 <li><a href="DisplayUser.jsp">Display User</a></li>
+                 <li><a href="DisplayServlet">Display User</a></li>
                 <li><a href="#">Contact Us</a></li>
 
             </ul>

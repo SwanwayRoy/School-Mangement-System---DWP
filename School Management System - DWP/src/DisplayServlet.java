@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.*;
 
 import javax.servlet.RequestDispatcher;
@@ -16,14 +15,14 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/DisplayServlet")
 public class DisplayServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public DisplayServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public DisplayServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,41 +31,42 @@ public class DisplayServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		
+
 		PreparedStatement ps;
-		ResultSet rsx = null;
+		ResultSet rsx;
 
-			try
+		try
+		{
+			//loading drivers for mysql
+			Class.forName("com.mysql.cj.jdbc.Driver");
+
+			//creating connection with the database
+			Connection con = DriverManager.getConnection
+					("jdbc:mysql://localhost:3306/sms", "root", "root");
+
+			ps = con.prepareStatement
+					("select * from user_account_details");
+			rsx = ps.executeQuery();
+
+			if (rsx != null)
 			{
-				//loading drivers for mysql
-				Class.forName("com.mysql.cj.jdbc.Driver");
-
-				//creating connection with the database
-				Connection con = DriverManager.getConnection
-						("jdbc:mysql://localhost:3306/sms", "root", "ROOT");
-				
-				ps = con.prepareStatement
-						("select * from user_account_details");
-				rsx = ps.executeQuery();
+				HttpSession session = request.getSession();
+				session.setAttribute("data",rsx);
+				RequestDispatcher rd = request.getRequestDispatcher("/DisplayUser.jsp");
+				rd.forward(request, response);					
+			}
+			else
+			{
+				System.out.println("No Data found");
+			}
 		}
 		catch(Exception e) 
 		{
 			e.printStackTrace();
 		}
-			
-		if (rsx != null)
-		{
-			HttpSession session = request.getSession();
-			session.setAttribute("data",rsx);
-			RequestDispatcher rd = request.getRequestDispatcher("DisplayUser.jsp");
-			rd.forward(request, response);
-		}
-		else
-		{
-			out.println("Error");
-		}
-		}
+
+
+	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
